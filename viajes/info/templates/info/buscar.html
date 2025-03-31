@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>Buscar Ciudad</h1>
+    <form method="GET" action="{% url 'info:buscar_ciudad' %}">
+        <input type="text" name="city" placeholder="Ej: Madrid">
+        <button type="submit">Buscar</button>
+    </form>
+{% endblock %}

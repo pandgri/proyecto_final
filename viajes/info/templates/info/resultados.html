@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1>{{ city }}</h1>
+
+    {% if photo %}
+        <img src="{{ photo }}" class="img-fluid rounded mb-4" alt="Foto de {{ city }}">
+    {% else %}
+        <div class="alert alert-info mb-4">No se encontraron imágenes para esta ciudad</div>
+    {% endif %}
+{% endblock %}

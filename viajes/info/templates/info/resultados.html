@@ -1,11 +1,234 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h1>{{ city }}</h1>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Eliminamos márgenes y configuramos fondo para toda la página */
+    html, body {
+        margin: 0;
+        padding: 0;
+        background: #f1f3f5;
+        min-height: 100%;
+    }
+
+    .container {
+        padding: 2rem;
+    }
+
+    /* Tarjeta de clima y turística */
+    .weather-card, .tourist-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .weather-card:hover, .tourist-card:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Iconos base */
+    .weather-icon {
+        font-size: 3rem;
+        margin: 1rem 0;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(5px); }
+        50% { transform: translateY(0); }
+    }
+
+    /* Colores para cada icono */
+    .weather-icon.sun {
+        color: #FDD835; /* Amarillo para cielos despejados */
+    }
+    .weather-icon.cloud {
+        color: #90A4AE; /* Gris azulado */
+    }
+    .weather-icon.cloud-rain {
+        color: #4FC3F7; /* Azul claro para lluvia */
+    }
+    .weather-icon.bolt {
+        color: #FF9800; /* Naranja para tormentas */
+    }
+    .weather-icon.snowflake {
+        color: #81D4FA; /* Azul pálido para nieve */
+    }
+    .weather-icon.cloud-showers-water {
+        color: #29B6F6; /* Azul vibrante */
+    }
+    .weather-icon.smog {
+        color: #B0BEC5; /* Gris para niebla */
+    }
+    .weather-icon.question {
+        color: #757575; /* Gris para casos desconocidos */
+    }
+
+    /* Detalles del clima */
+    .weather-detail {
+        background: #e9ecef;
+        color: #343a40;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    /* Cabecera con imagen de la ciudad */
+    .city-header {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Listado de puntos turísticos */
+    .tourist-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .tourist-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .tourist-list li:last-child {
+        border-bottom: none;
+    }
+
+    .maps-link {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid #007bff;
+        border-radius: 8px;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .maps-link:hover {
+        background: #007bff;
+        color: #fff;
+    }
+
+    .puntos-turisticos li {
+        list-style: none;
+    }
+
+    .puntos-turisticos li::before {
+        content: '📌';
+        display: inline-block;
+        height: 10px;
+        width: 30px;
+    }
+
+    .puntos-turisticos a {
+        text-decoration: none;
+        color: #1a73e8;
+        font-weight: 500;
+    }
+
+    .puntos-turisticos a:hover {
+        color: red;
+    }
+
+</style>
+
+<div class="container">
+    <!-- Nombre de la ciudad -->
+    <h1 class="text-dark mb-4 display-4 fw-bold">{{ city }}</h1>
+
+    <!-- Imagen de la ciudad -->
     {% if photo %}
-        <img src="{{ photo }}" class="img-fluid rounded mb-4" alt="Foto de {{ city }}">
+        <div class="city-header shadow-sm">
+            <img src="{{ photo }}" class="img-fluid w-100" alt="Foto de {{ city }}">
+        </div>
     {% else %}
-        <div class="alert alert-info mb-4">No se encontraron imágenes para esta ciudad</div>
+        <div class="alert alert-secondary mb-4">No se encontraron imágenes para esta ciudad</div>
     {% endif %}
+
+    <!-- Tarjeta de datos del clima -->
+    <div class="weather-card">
+        <div class="card-header bg-transparent border-0 pb-0 d-flex align-items-center">
+            <h3 class="mb-0 me-3">Clima Actual</h3>
+            <!-- Icono dinámico según la condición -->
+            <i class="fa-solid fa-{{ weather_icon }} weather-icon {{ weather_icon }}"></i>
+        </div>
+        <div class="card-body">
+            {% if weather and weather.main %}
+                <div class="row g-3 justify-content-center">
+                    <!-- Temperatura -->
+                    <div class="col-12 col-md-4">
+                        <div class="weather-detail">
+                            <i class="fa-solid fa-thermometer-half fa-lg mb-2"></i>
+                            <h4>{{ weather.main.temp|default:"N/A" }}°C</h4>
+                            <small>Temperatura</small>
+                        </div>
+                    </div>
+
+                    <!-- Humedad -->
+                    <div class="col-12 col-md-4">
+                        <div class="weather-detail">
+                            <i class="fa-solid fa-tint fa-lg mb-2"></i>
+                            <h4>{{ weather.main.humidity|default:"N/A" }}%</h4>
+                            <small>Humedad</small>
+                        </div>
+                    </div>
+
+                    <!-- Viento -->
+                    <div class="col-12 col-md-4">
+                        <div class="weather-detail">
+                            <i class="fa-solid fa-wind fa-lg mb-2"></i>
+                            <h4>{{ weather.wind.speed|default:"N/A" }} m/s</h4>
+                            <small>Viento</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción del clima -->
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <h3 class="text-muted">
+                            {{ weather.weather.0.description|default:"N/A"|capfirst }}
+                        </h3>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">No se pudo obtener información del clima</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tarjeta de puntos turísticos y enlace a Google Maps -->
+    <div class="tourist-card">
+        <h3 class="mb-3">Puntos Turísticos (Top 5)</h3>
+        {% if tourist_spots %}
+            <div class="puntos-turisticos">
+                <ul>
+                    {% for spot in tourist_spots %}
+                        <li>
+                            <a href="{{ spot.maps_link }}" target="_blank">
+                                {{ spot.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">No se encontraron puntos turísticos en esta ciudad.</div>
+        {% endif %}
+        <!-- Enlace a Google Maps para ver la ciudad -->
+        {% if maps_url %}
+            <a href="{{ maps_url }}" class="maps-link" target="_blank">Ver en Google Maps</a>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}

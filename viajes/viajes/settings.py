@@ -135,7 +135,7 @@ LOGOUT_REDIRECT_URL = 'info:home'
 
 OWM_API_KEY = os.getenv('OWM_API_KEY')
 PIXABAY_KEY = os.getenv('PIXABAY_KEY')
-GMAPS_API_KEY = os.getenv('GMAPS_API_KEY')
+OPENTRIPMAP_KEY = os.getenv('OPENTRIPMAP_KEY')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -2,7 +2,13 @@ from math import trunc
 
 import requests
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib import messages
+from info.forms import ViajeForm
+from info.models import Imagen, Actividad, Viaje
+
 
 def home(request):
     return render(request, 'info/home.html')
@@ -25,7 +31,10 @@ def es_ciudad(ciudad):
 
         for lugar in data:
             if 'addresstype' in lugar:
-                return lugar["addresstype"] == "city"
+                if lugar["addresstype"] == "city":
+                    return "ciudad"
+                elif lugar["addresstype"] == "town":
+                    return "pueblo"
 
         return False
 
@@ -35,6 +44,9 @@ def es_ciudad(ciudad):
 def buscar_ciudad(request):
     city = request.GET.get('city', '').strip()
     context = {'city': city}
+
+    pueblo = es_ciudad(city)
+    context['pueblo'] = pueblo
 
     if not city:
         return render(request, 'info/buscar.html', context)
@@ -91,14 +103,19 @@ def buscar_ciudad(request):
 
             # Procesar puntos turísticos
             context['tourist_spots'] = []
-            for spot in tourist_data[:5]:  # Limitar a 5 resultados
-                if 'name' in spot and 'point' in spot:
-                    # Crear enlace a Google Maps con coordenadas del punto turístico
-                    maps_link = f"https://www.google.com/maps?q={spot['point']['lat']},{spot['point']['lon']}"
+            for spot in tourist_data:
+                name = spot.get('name', '').strip()
+                point = spot.get('point')
+
+                if name and point:
+                    maps_link = f"https://www.google.com/maps?q={point['lat']},{point['lon']}"
                     context['tourist_spots'].append({
-                        'name': spot['name'],
+                        'name': name,
                         'maps_link': maps_link
                     })
+
+                if len(context['tourist_spots']) >= 5:
+                    break
 
             # Enlace general a Google Maps para la ciudad
             context['maps_url'] = f"https://www.google.com/maps?q={lat},{lon}&hl=es"
@@ -108,3 +125,48 @@ def buscar_ciudad(request):
             context['error'] = f"⚠️ Error: {str(e)}"
 
         return render(request, 'info/resultados.html', context)
+
+# Vista para listar todos los viajes
+def lista_viajes(request):
+    viajes = Viaje.objects.all().order_by('-fecha_creacion')
+    return render(request, 'info/lista_viajes.html', {'viajes': viajes})
+
+# Vista para el detalle de un viaje
+def detalle_viaje(request, viaje_id):
+    viaje = get_object_or_404(Viaje, pk=viaje_id)
+    actividades = Actividad.objects.filter(viaje=viaje).order_by('fecha', 'tiempo')
+    imagenes = Imagen.objects.filter(viaje=viaje)
+    return render(request, 'info/detalle_viaje.html', {
+        'viaje': viaje,
+        'actividades': actividades,
+        'imagenes': imagenes,
+    })
+
+# Vista para crear un nuevo viaje
+def crear_viaje(request):
+    if request.method == 'POST':
+        form = ViajeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('detalle_viaje', viaje_id=form.instance.id)
+    else:
+        form = ViajeForm()
+    return render(request, 'info/form_viaje.html', {'form': form})
+
+# Vista para editar un viaje existente
+def editar_viaje(request, viaje_id):
+    viaje = get_object_or_404(Viaje, pk=viaje_id)
+    if request.method == 'POST':
+        form = ViajeForm(request.POST, instance=viaje)
+        if form.is_valid():
+            form.save()
+            return redirect('detalle_viaje', viaje_id=viaje.id)
+    else:
+        form = ViajeForm(instance=viaje)
+    return render(request, 'info/form_viaje.html', {'form': form})
+
+# Vista para eliminar un viaje
+def eliminar_viaje(request, viaje_id):
+    viaje = get_object_or_404(Viaje, pk=viaje_id)
+    viaje.delete()
+    return redirect('lista_viajes')

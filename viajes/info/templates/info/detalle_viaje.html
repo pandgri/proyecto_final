@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ viaje.titulo }} - {{ viaje.ciudad }}</h2>
+<p><strong>Fechas:</strong> {{ viaje.fecha_inicio }} a {{ viaje.fecha_final }}</p>
+<p><strong>Presupuesto:</strong> €{{ viaje.presupuesto }}</p>
+<p>{{ viaje.descripcion }}</p>
+
+<h3>Actividades</h3>
+<ul>
+    {% for actividad in actividades %}
+        <li>{{ actividad.fecha }} - {{ actividad.titulo }} en {{ actividad.localizacion }} (€{{ actividad.coste }})</li>
+    {% empty %}
+        <li>No hay actividades registradas.</li>
+    {% endfor %}
+</ul>
+
+<h3>Imágenes</h3>
+<div>
+    {% for imagen in imagenes %}
+        <div>
+            <img src="{{ imagen.imagen.url }}" alt="" width="200" />
+            <p>{{ imagen.comentario }}</p>
+        </div>
+    {% empty %}
+        <p>No hay imágenes aún.</p>
+    {% endfor %}
+</div>
+{% endblock %}

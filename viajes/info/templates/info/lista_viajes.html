@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Mis Viajes</h1>
+<a href="{% url 'info:crear_viaje' %}" class="btn btn-primary">+ Nuevo viaje</a>
+<ul class="list-group mt-3">
+    {% for viaje in viajes %}
+        <li class="list-group-item">
+            <a href="{% url 'info:detalle_viaje' viaje.id %}">{{ viaje.titulo }} en {{ viaje.ciudad }} ({{ viaje.fecha_inicio }} - {{ viaje.fecha_final }})</a>
+            <a href="{% url 'info:editar_viaje' viaje.id %}" class="btn btn-warning btn-sm float-end ms-2">Editar</a>
+            <a href="{% url 'info:eliminar_viaje' viaje.id %}" class="btn btn-danger btn-sm float-end ms-2" onclick="return confirm('¿Estás seguro de eliminar este viaje?');">Eliminar</a>
+            <a href="{% url 'info:exportar_viaje_pdf' viaje.id %}" class="btn btn-success btn-sm float-end ms-2">Exportar PDF</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No tienes viajes guardados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

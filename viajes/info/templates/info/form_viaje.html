@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Nuevo Viaje</h2>
+
+<form id="form-viaje" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+    
+<div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+
+{% endblock %}
+<script>
+    document.getElementById("form-viaje").addEventListener("submit", function(event) {
+        const fechaInicio = new Date(document.getElementById("id_fecha_inicio").value);
+        const fechaFinal = new Date(document.getElementById("id_fecha_final").value);
+        const errorMsg = document.getElementById("error-message");
+
+        if (fechaInicio > fechaFinal) {
+            event.preventDefault();
+            errorMsg.textContent = "La fecha de inicio no puede ser posterior a la fecha final.";
+            errorMsg.style.display = "block";
+        } else {
+            errorMsg.style.display = "none";
+        }
+    });
+</script>

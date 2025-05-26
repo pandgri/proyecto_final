@@ -1,18 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Mis Viajes</h1>
-<a href="{% url 'info:crear_viaje' %}" class="btn btn-primary">+ Nuevo viaje</a>
-<ul class="list-group mt-3">
-    {% for viaje in viajes %}
-        <li class="list-group-item">
-            <a href="{% url 'info:detalle_viaje' viaje.id %}">{{ viaje.titulo }} en {{ viaje.ciudad }} ({{ viaje.fecha_inicio }} - {{ viaje.fecha_final }})</a>
-            <a href="{% url 'info:editar_viaje' viaje.id %}" class="btn btn-warning btn-sm float-end ms-2">Editar</a>
-            <a href="{% url 'info:eliminar_viaje' viaje.id %}" class="btn btn-danger btn-sm float-end ms-2" onclick="return confirm('¿Estás seguro de eliminar este viaje?');">Eliminar</a>
-            <a href="{% url 'info:exportar_viaje_pdf' viaje.id %}" class="btn btn-success btn-sm float-end ms-2">Exportar PDF</a>
-        </li>
-    {% empty %}
-        <li class="list-group-item">No tienes viajes guardados.</li>
-    {% endfor %}
-</ul>
-{% endblock %}
+<div class="container mt-4">
+    <h1 class="mb-4">Mis Viajes</h1>
+    <a href="{% url 'info:crear_viaje' %}" class="btn btn-primary mb-3">+ Nuevo viaje</a>
+    
+    <div class="list-group">
+        {% for viaje in viajes %}
+            <div class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>
+                            <a href="{% url 'info:detalle_viaje' viaje.pk %}" class="text-decoration-none">
+                                {{ viaje.titulo }} ({{ viaje.ciudad }})
+                            </a>
+                        </h5>
+                        <small class="text-muted">{{ viaje.fecha_inicio|date:"d M Y" }} - {{ viaje.fecha_final|date:"d M Y" }}</small>
+                    </div>
+                    <div class="btn-group">
+                        <a href="{% url 'info:editar_viaje' viaje.pk %}" class="btn btn-outline-warning btn-sm">Editar</a>
+                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-url="{% url 'info:eliminar_viaje' viaje.pk %}">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info">No tienes viajes guardados.</div>
+        {% endfor %}
+    </div>
+</div>
 
+{% endblock %}

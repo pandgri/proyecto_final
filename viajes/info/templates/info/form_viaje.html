@@ -1,30 +1,48 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h2>Nuevo Viaje</h2>
+<div class="container mt-4">
+    <h2>{% if object %}Editar{% else %}Nuevo{% endif %} Viaje</h2>
 
-<form id="form-viaje" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+    <form method="post" class="mt-3" id="form-viaje">
+        {% csrf_token %}
 
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+            <div class="errores d-block">{{ error }}</div>
+        {% endfor %}
+            </div>
+        {% endfor %}
     
-<div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+        <div class="mt-4 mb-4">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% if object %}{% url 'info:detalle_viaje' object.pk %}{% else %}{% url 'info:lista_viajes' %}{% endif %}"
+               class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
 
-{% endblock %}
 <script>
     document.getElementById("form-viaje").addEventListener("submit", function(event) {
-        const fechaInicio = new Date(document.getElementById("id_fecha_inicio").value);
-        const fechaFinal = new Date(document.getElementById("id_fecha_final").value);
-        const errorMsg = document.getElementById("error-message");
+    let fechaInicio = new Date(document.getElementById("id_fecha_inicio").value);
+    let fechaFinal = new Date(document.getElementById("id_fecha_final").value);
 
-        if (fechaInicio > fechaFinal) {
-            event.preventDefault();
-            errorMsg.textContent = "La fecha de inicio no puede ser posterior a la fecha final.";
-            errorMsg.style.display = "block";
-        } else {
-            errorMsg.style.display = "none";
-        }
-    });
+    if (fechaInicio > fechaFinal) {
+        event.preventDefault();
+        
+        let errorMsg = document.createElement('div');
+        errorMsg.className = 'alert alert-danger mt-3';
+        errorMsg.textContent = "La fecha de inicio no puede ser posterior a la fecha final.";
+        
+        let botones = this.querySelector('.mt-4.mb-4');
+        
+        this.insertBefore(errorMsg, botones);
+    }
+});
 </script>
+{% endblock %}

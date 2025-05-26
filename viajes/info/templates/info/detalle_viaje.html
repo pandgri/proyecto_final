@@ -1,28 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>{{ viaje.titulo }} - {{ viaje.ciudad }}</h2>
-<p><strong>Fechas:</strong> {{ viaje.fecha_inicio }} a {{ viaje.fecha_final }}</p>
-<p><strong>Presupuesto:</strong> €{{ viaje.presupuesto }}</p>
-<p>{{ viaje.descripcion }}</p>
-
-<h3>Actividades</h3>
-<ul>
-    {% for actividad in actividades %}
-        <li>{{ actividad.fecha }} - {{ actividad.titulo }} en {{ actividad.localizacion }} (€{{ actividad.coste }})</li>
-    {% empty %}
-        <li>No hay actividades registradas.</li>
-    {% endfor %}
-</ul>
-
-<h3>Imágenes</h3>
-<div>
-    {% for imagen in imagenes %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ viaje.titulo }} - {{ viaje.ciudad }}</h2>
         <div>
-            <img src="{{ imagen.imagen.url }}" alt="" width="200" />
-            <p>{{ imagen.comentario }}</p>
+            <a href="{% url 'info:editar_viaje' viaje.pk %}" class="btn btn-outline-warning btn-sm">Editar Viaje</a>
+            <button type="button" class="btn btn-outline-danger btn-sm" 
+                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                    data-url="{% url 'info:eliminar_viaje' viaje.pk %}">
+                Eliminar
+            </button>
         </div>
-    {% empty %}
-        <p>No hay imágenes aún.</p>
-    {% endfor %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Detalles del Viaje</h5>
+                    <p class="card-text">{{ viaje.descripcion }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Fechas:</strong> {{ viaje.fecha_inicio|date:"d M Y" }} - {{ viaje.fecha_final|date:"d M Y" }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Presupuesto:</strong> {{ viaje.presupuesto|floatformat:2 }}€
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Imágenes</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="viajeCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for imagen in imagenes %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ imagen.imagen.url }}" 
+                                         class="d-block w-100" 
+                                         alt="{{ imagen.comentario|default:'Imagen del viaje' }}"
+                                         style="height: 60vh; object-fit: cover;">
+                                    {% if imagen.comentario %}
+                                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50">
+                                            <p>{{ imagen.comentario }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% empty %}
+                                <div class="carousel-item active">
+                                    <div class="d-flex align-items-center justify-content-center" 
+                                         style="height: 300px;">
+                                        <p class="text-muted">No hay imágenes disponibles</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#viajeCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#viajeCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'info:subir_imagen' viaje.pk %}" 
+                           class="btn btn-primary w-100 mt-3">
+                            <i class="bi bi-cloud-upload me-2"></i>Subir Imágenes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
 </div>
 {% endblock %}

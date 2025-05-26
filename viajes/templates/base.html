@@ -1,39 +1,62 @@
+{% load crispy_forms_filters %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}VIAJES{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <title>{% block title %}Viajeros{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         :root {
-            --header-color: #292929;
-            --main-color: #3d3d3d;
-            --card-color: #464646;
-            --detail-color: #525252;
-            --font-color: #bdbdbd;
+            --color-fondo: #1a1a1a;
+            --color-texto: #e0e0e0;
+            --color-primario: #0066cc;
+            --color-bordes: #4d4d4d;
         }
 
-        * {
-            color: var(--font-color);
+        body {
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
         }
 
-        html, body {
-            margin: 0;
+        [id*="helptext"] {
+            color: #DC3545;
+        }
+
+        .errores {
+            color: #ff6b6b;
+        }
+
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+        }
+
+        .custom-file-input {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .btn-position-absolute {
+            width: 40px;
+            height: 40px;
             padding: 0;
-            background: var(--main-color);
-            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hover-red:hover button {
+            color: #dc3545 !important;
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark p-4" style="box-shadow: 0 1px 10px black">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark " style="box-shadow: 0 1px 10px black">
     <div class="container ps-5 pe-5">
         <a class="navbar-brand" href="/">
             <i class="bi bi-globe2 me-2"></i>VIAJES
@@ -41,35 +64,243 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse mt-2 mt-lg-0" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'info:home' %}">
-                        <i class="bi bi-house-door me-1"></i>Inicio
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'info:buscar_ciudad' %}">
-                        <i class="bi bi-search me-1"></i>Buscar Ciudad
-                    </a>
-                </li>
+        <div class="collapse navbar-collapse mt-2" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info:buscar_ciudad' %}">
+                            <i class="bi bi-search me-1"></i> Buscar Ciudad
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info:lista_viajes' %}">
+                            <i class="bi bi-airplane"></i> Mis Viajes
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Perfil"
+                                 class="rounded-circle"
+                                 style="width: 40px; height: 40px; object-fit: cover;">
+                            {% else %}
+                            Mi Perfil
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'users:perfil' %}">
+                                <i class="bi bi-gear me-2"></i>Configurar Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-item hover-red">
+                                <form method="post" action="{% url 'users:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="nav-link btn btn-link text-black p-0">
+                                        <i class="bi bi-box-arrow-right me-2 ms-1"></i>Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info:home' %}">
+                            <i class="bi bi-house-door me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link me-2" href="{% url 'info:buscar_ciudad' %}">
+                            <i class="bi bi-search me-1"></i> Buscar Ciudad
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light me-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-box-arrow-in-right"></i> Ingresar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registroModal">
+                            <i class="bi bi-person-plus"></i> Registrarse
+                        </button>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container p-4">
+<main class="container mt-4">
     {% block content %}{% endblock %}
+</main>
+
+<!-- Modal Login -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border border-secondary text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-unlock me-2"></i>Iniciar Sesión
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'users:login' %}">
+                    {% csrf_token %}
+                    <div class="text-light">
+                        {{ login_form|crispy }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Iniciar sesión</button>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary justify-content-center">
+                <span class="text-white">
+                    ¿No tienes cuenta?
+                    <a href="#" class="text-decoration-none text-primary"
+                       data-bs-toggle="modal" data-bs-target="#registroModal">
+                        Regístrate aquí
+                    </a>
+                </span>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% if messages %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<!-- Modal Registro -->
+<div class="modal fade" id="registroModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark border border-secondary text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-person-plus me-2"></i>Registro
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'users:registro' %}">
+                    {% csrf_token %}
+                    <div class="text-light">
+                        {{ registro_form|crispy }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Registrarse</button>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary justify-content-center">
+                <span class="text-white">
+                    ¿Ya tienes cuenta?
+                    <a href="#" class="text-decoration-none text-primary"
+                       data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Inicia sesión aquí
+                    </a>
+                </span>
+            </div>
+        </div>
     </div>
-{% endif %}
+</div>
+
+<!-- Modal de Confirmación Eliminar -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este viaje?</p>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast align-items-center text-white border-0 position-fixed bottom-0 end-0 m-3">
+    <div class="d-flex">
+        <div class="toast-body">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span id="toast-message"></span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-3 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+</div>
+
+<!-- JavaScript Básico -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let toast = new bootstrap.Toast(document.getElementById('toast'));
+
+    {% for message in messages %}
+        {% if message.message == 'login_success' %}
+            document.getElementById('toast-message').textContent = '¡Sesión iniciada correctamente!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'registro_success' %}
+            document.getElementById('toast-message').textContent = '¡Registro correcto!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'logout_success' %}
+            document.getElementById('toast-message').textContent = '¡Sesión cerrada correctamente!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'creacion_viaje_success' %}
+            document.getElementById('toast-message').textContent = '¡Viaje creado con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'edicion_viaje_success' %}
+            document.getElementById('toast-message').textContent = '¡Viaje actualizado con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-warning');
+            toast.show();
+        {% elif message.message == 'eliminacion_viaje_success' %}
+            document.getElementById('toast-message').textContent = '¡Viaje eliminado con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-danger');
+            toast.show();
+        {% elif message.message == 'edicion_perfil_success' %}
+            document.getElementById('toast-message').textContent = '¡Perfil actualizado correctamente!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+        {% endif %}
+    {% endfor %}
+
+    {% if login_form.errors %}
+        let loginFields = document.querySelectorAll('#loginModal .is-invalid');
+        if (loginFields.length > 0) {
+            new bootstrap.Modal(document.getElementById('loginModal')).show();
+        }
+    {% endif %}
+
+    {% if registro_form.errors %}
+        let registroFields = document.querySelectorAll('#registroModal .is-invalid');
+        if (registroFields.length > 0) {
+            new bootstrap.Modal(document.getElementById('registroModal')).show();
+        }
+    {% endif %}
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+        let deleteModal = document.getElementById('deleteModal');
+
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            let button = event.relatedTarget;
+            let url = button.getAttribute('data-url');
+            let form = document.getElementById('deleteForm');
+            form.action = url;
+        });
+    });
+
+</script>
 
 </body>
 </html>

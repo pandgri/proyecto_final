@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_cleanup.apps.CleanupConfig',
+    'django_countries',
 ]
 
 MIDDLEWARE = [
@@ -112,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 
@@ -130,12 +131,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.CustomUser'
+LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = 'info:home'
 LOGOUT_REDIRECT_URL = 'info:home'
 
 OWM_API_KEY = os.getenv('OWM_API_KEY')
 PIXABAY_KEY = os.getenv('PIXABAY_KEY')
 OPENTRIPMAP_KEY = os.getenv('OPENTRIPMAP_KEY')
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -1,8 +1,13 @@
+from django.conf import settings
 from django.db import models
 from users.models import CustomUser
 
 class Viaje(models.Model):
-    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='viajes'
+    )
     titulo = models.CharField(max_length=200)
     ciudad = models.CharField(max_length=100)
     fecha_inicio = models.DateField()

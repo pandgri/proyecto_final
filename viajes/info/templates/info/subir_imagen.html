@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Subir imágenes a {{ viaje.titulo }}</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label h5">Seleccionar imágenes:</label>
+                    {{ form.imagenes }}
+                    <div class="form-text text-muted mt-2">
+                        {{ form.imagenes.help_text }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label h5">Comentario general:</label>
+                    {{ form.comentario }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-cloud-arrow-up me-2"></i>Subir imágenes
+            </button>
+            <a href="{% url 'info:detalle_viaje' viaje.pk %}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

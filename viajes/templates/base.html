@@ -15,6 +15,7 @@
             --color-texto: #e0e0e0;
             --color-primario: #0066cc;
             --color-bordes: #4d4d4d;
+            --color-card: #D3D3D3;
         }
 
         body {
@@ -27,7 +28,7 @@
         }
 
         .errores {
-            color: #ff6b6b;
+            color: #DC3545;
         }
 
         .card-header {
@@ -56,7 +57,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark " style="box-shadow: 0 1px 10px black">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="box-shadow: 0 1px 10px black">
     <div class="container ps-5 pe-5">
         <a class="navbar-brand" href="/">
             <i class="bi bi-globe2 me-2"></i>VIAJES
@@ -271,22 +272,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('toast-message').textContent = '¡Perfil actualizado correctamente!';
             document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
             document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'actividad_agregada_success' %}
+            document.getElementById('toast-message').textContent = '¡Actividad agregada con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
         {% endif %}
     {% endfor %}
-
-    {% if login_form.errors %}
-        let loginFields = document.querySelectorAll('#loginModal .is-invalid');
-        if (loginFields.length > 0) {
-            new bootstrap.Modal(document.getElementById('loginModal')).show();
-        }
-    {% endif %}
-
-    {% if registro_form.errors %}
-        let registroFields = document.querySelectorAll('#registroModal .is-invalid');
-        if (registroFields.length > 0) {
-            new bootstrap.Modal(document.getElementById('registroModal')).show();
-        }
-    {% endif %}
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -298,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let form = document.getElementById('deleteForm');
             form.action = url;
         });
-    });
+});
 
 </script>
 

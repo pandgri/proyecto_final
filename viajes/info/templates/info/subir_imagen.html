@@ -24,13 +24,8 @@
         </div>
 
         <div class="d-grid gap-2 d-md-flex justify-content-end">
-            <button type="submit" class="btn btn-sm btn-primary">
-                <i class="bi bi-cloud-arrow-up me-2"></i>Subir imágenes
-            </button>
-            <a href="{% url 'info:detalle_viaje' viaje.pk %}"
-               class="btn btn-sm btn-outline-secondary">
-                <i class="bi bi-x-circle me-2"></i>Cancelar
-            </a>
+            <button type="submit" class="btn btn-sm btn-primary">Subir imágenes</button>
+            <a href="{% url 'info:detalle_viaje' viaje.pk %}" class="btn btn-sm btn-outline-secondary">Cancelar</a>
         </div>
     </form>
 </div>

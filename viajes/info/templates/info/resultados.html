@@ -7,7 +7,7 @@
 <style>
     /* Tarjeta de clima y turística */
     .weather-card, .tourist-card {
-        background: var(--card-color);
+        background: var(--color-card);
         border-radius: 15px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease;
@@ -53,8 +53,8 @@
 
     /* Detalles del clima */
     .weather-detail {
-        background: var(--detail-color);
-        color: var(--font-color);
+        background: var(--color-bordes);
+        color: var(--color-texto);
         border-radius: 8px;
         padding: 1rem;
         text-align: center;
@@ -129,9 +129,13 @@
         <span class="badge bg-danger p-2 mb-3 lead fs-6">Se considera un pueblo</span>
     {% endif %}
     <!-- Imagen de la ciudad -->
-    {% if photo %}
-        <div class="city-header shadow-sm">
-            <img src="{{ photo }}" class="img-fluid w-100" alt="Foto de {{ city }}">
+    {% if photos %}
+        <div class="row city-header shadow-sm mb-4">
+            {% for photo in photos %}
+                <div class="col-md-6 mb-2">
+                    <img src="{{ photo }}" class="img-fluid w-100 rounded" alt="Foto de {{ city }}">
+                </div>
+            {% endfor %}
         </div>
     {% else %}
         <div class="alert alert-secondary mb-4">No se encontraron imágenes para esta ciudad</div>
@@ -140,7 +144,7 @@
     <!-- Tarjeta de datos del clima -->
     <div class="weather-card">
         <div class="card-header bg-transparent border-0 pb-0 d-flex align-items-center">
-            <h3 class="mb-0 me-3">Clima Actual</h3>
+            <h3 class="mb-3 me-3 text-black">Clima Actual</h3>
             <i class="fa-solid fa-{{ weather_icon }} weather-icon {{ weather_icon }} ps-1"></i>
         </div>
         <div class="card-body">
@@ -191,7 +195,7 @@
 
     <!-- Tarjeta de puntos turísticos y enlace a Google Maps -->
     <div class="tourist-card">
-        <h3 class="mb-3">Puntos Turísticos (Top 5)</h3>
+        <h3 class="mb-3 text-black">Puntos Turísticos (Top 5)</h3>
         {% if tourist_spots %}
             <div class="puntos-turisticos">
                 <ul>

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib import messages
-from info.forms import ViajeForm, ImagenForm
+from info.forms import ViajeForm, ImagenForm, ActividadForm
 from info.models import Imagen, Actividad, Viaje
 
 
@@ -88,7 +88,8 @@ def buscar_ciudad(request):
            photo_data = photo_response.json()
 
            if photo_data.get('hits'):
-               context['photo'] = photo_data['hits'][0]['webformatURL']
+               fotos = photo_data['hits'][:2]
+               context['photos'] = [foto['webformatURL'] for foto in fotos]
 
            # Obtener puntos turísticos con OpenTripMap
            lat = weather_data['coord']['lat']
@@ -122,7 +123,7 @@ def buscar_ciudad(request):
 
 
        except Exception as e:
-           context['error'] = f"⚠️ Error: {str(e)}"
+           context['error'] = f"Error: {str(e)}"
 
        return render(request, 'info/resultados.html', context)
 
@@ -138,16 +139,30 @@ class ListaViajesView(LoginRequiredMixin, ListView):
 
 
 class DetalleViajeView(LoginRequiredMixin, DetailView):
-   model = Viaje
-   template_name = 'info/detalle_viaje.html'
-   context_object_name = 'viaje'
+    model = Viaje
+    template_name = 'info/detalle_viaje.html'
+    context_object_name = 'viaje'
 
-   def get_context_data(self, **kwargs):
-       context = super().get_context_data(**kwargs)
-       viaje = self.object
-       context['actividades'] = Actividad.objects.filter(viaje=viaje).order_by('fecha', 'tiempo')
-       context['imagenes'] = Imagen.objects.filter(viaje=viaje)
-       return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        viaje = self.object
+        context['actividades'] = Actividad.objects.filter(viaje=viaje).order_by('fecha', 'tiempo')
+        context['imagenes'] = Imagen.objects.filter(viaje=viaje)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # Obtener todas las actividades del viaje
+        actividades = Actividad.objects.filter(viaje=self.object)
+
+        # Actualizar estado de cada actividad
+        for actividad in actividades:
+            checkbox_name = f"actividad_{actividad.id}"
+            actividad.completada = checkbox_name in request.POST
+            actividad.save()
+
+        return redirect('info:detalle_viaje', pk=self.object.pk)
 
 
 class CrearViajeView(LoginRequiredMixin, CreateView):
@@ -195,10 +210,7 @@ class SubirImagenView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = ImagenForm()
         viaje = get_object_or_404(Viaje, pk=self.kwargs['pk'])
-        return render(request, self.template_name, {
-            'form': form,
-            'viaje': viaje
-        })
+        return render(request, self.template_name, {'form': form, 'viaje': viaje})
 
     def post(self, request, *args, **kwargs):
         form = ImagenForm(request.POST, request.FILES)
@@ -222,7 +234,23 @@ class SubirImagenView(LoginRequiredMixin, View):
             messages.success(request, f"{len(archivos)} imágenes subidas!")
             return redirect('info:detalle_viaje', pk=viaje.pk)
 
-        return render(request, self.template_name, {
-            'form': form,
-            'viaje': viaje
-        })
+        return render(request, self.template_name, {'form': form, 'viaje': viaje})
+
+class AgregarActividadView(LoginRequiredMixin, View):
+    template_name = 'info/agregar_actividad.html'
+
+    def get(self, request, pk):
+        viaje = get_object_or_404(Viaje, pk=pk)
+        form = ActividadForm(viaje=viaje)
+        return render(request, self.template_name, {'form': form, 'viaje': viaje})
+
+    def post(self, request, pk):
+        viaje = get_object_or_404(Viaje, pk=pk)
+        form = ActividadForm(request.POST)
+        if form.is_valid():
+            actividad = form.save(commit=False)
+            actividad.viaje = viaje
+            actividad.save()
+            messages.success(request, "actividad_agregada_success")
+            return redirect('info:detalle_viaje', pk=viaje.pk)
+        return render(request, self.template_name, {'form': form, 'viaje': viaje})

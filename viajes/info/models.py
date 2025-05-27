@@ -32,6 +32,7 @@ class Actividad(models.Model):
     localizacion = models.CharField(max_length=255)
     coste = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     informacion = models.TextField(blank=True)
+    completada = models.BooleanField(default=False)
 
     def __str__(self):
         return self.titulo

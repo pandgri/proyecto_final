@@ -21,10 +21,36 @@ class ActividadForm(forms.ModelForm):
         model = Actividad
         fields = ['titulo', 'fecha', 'tiempo', 'localizacion', 'coste', 'informacion']
         widgets = {
-            'fecha': forms.DateInput(attrs={'type': 'date'}),
-            'tiempo': forms.TimeInput(attrs={'type': 'time'}),
-            'informacion': forms.Textarea(attrs={'rows': 2}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+                'min': None,
+                'max': None
+            }),
+            'tiempo': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'localizacion': forms.TextInput(attrs={'class': 'form-control', 'type': 'text'}),
+            'coste': forms.NumberInput(attrs={'class': 'form-control'}),
+            'informacion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
+
+    def __init__(self, *args, **kwargs):
+        viaje = kwargs.pop('viaje', None)
+        super().__init__(*args, **kwargs)
+
+        if viaje:
+            self.fields['fecha'].widget.attrs['min'] = viaje.fecha_inicio.isoformat()
+            self.fields['fecha'].widget.attrs['max'] = viaje.fecha_final.isoformat()
+
+            self.fields['fecha'].validators.append(
+                lambda value: self.validate_fecha(value, viaje)
+            )
+
+    def validate_fecha(self, value, viaje):
+        if not (viaje.fecha_inicio <= value <= viaje.fecha_final):
+            raise forms.ValidationError(
+                f"La fecha debe estar entre {viaje.fecha_inicio} y {viaje.fecha_final}"
+            )
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -46,7 +72,8 @@ class ImagenForm(forms.Form):
             allowed_extensions=['jpg', 'jpeg', 'png', 'gif']
         )],
         label="Selecciona imágenes",
-        help_text="Formatos permitidos: JPG, PNG, GIF (Máx. 10 archivos)"
+        help_text="Formatos permitidos: JPG, PNG, GIF (Máx. 10 archivos)",
+        widget=MultipleFileInput(attrs={'class': 'form-control'}),
     )
     comentario = forms.CharField(
         required=False,

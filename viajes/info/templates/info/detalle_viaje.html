@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>{{ viaje.titulo }} - {{ viaje.ciudad }}</h2>
+        <h3>{{ viaje.titulo }} - {{ viaje.ciudad }}</h3>
         <div>
             <a href="{% url 'info:editar_viaje' viaje.pk %}" class="btn btn-outline-warning btn-sm">Editar Viaje</a>
             <button type="button" class="btn btn-outline-danger btn-sm" 
@@ -77,7 +77,59 @@
             </div>
         </div>
 
-        
+        <div class="col-md-4">
+           <div class="card mb-4">
+               <div class="card-header">
+                   <h5>Actividades</h5>
+               </div>
+               <div class="card-body p-0">
+                   <form method="post">
+                       {% csrf_token %}
+                       <div class="list-group list-group-flush">
+                           {% for actividad in actividades %}
+                               <div class="list-group-item">
+                                   <div class="form-check">
+                                       <input class="form-check-input" type="checkbox" name="actividad_{{ actividad.id }}" id="actividad_{{ actividad.id }}" {% if actividad.completada %}checked{% endif %} onchange="this.form.submit();">
+                                       <label class="form-check-label {% if actividad.completada %}text-decoration-line-through text-muted{% endif %}" for="actividad_{{ actividad.id }}">
+                                           <strong>{{ actividad.titulo }}</strong> <span class="badge bg-success mt-1 ms-2">{{ actividad.coste|floatformat:2 }}€</span> <br>
+                                           <small>{{ actividad.fecha|date:"d M Y" }} {% if actividad.tiempo %} • {{ actividad.tiempo|time:"H:i" }}{% endif %}</small><br>
+                                           {% if actividad.informacion %}<div class="mt-1 small">{{ actividad.informacion }}</div>{% endif %}
+                                       </label>
+                                   </div>
+                               </div>
+                           {% empty %}
+                               <div class="text-center py-4">
+                                   <p class="text-muted">No hay actividades registradas</p>
+                               </div>
+                           {% endfor %}
+                       </div>
+                   </form>
+                   <div class="p-3 border-bottom">
+                       <a href="{% url 'info:agregar_actividad' viaje.pk %}" class="btn btn-sm btn-success w-100">
+                           <i class="bi bi-plus-lg"></i> Añadir Actividad
+                       </a>
+                   </div>
+               </div>
+           </div>
+        </div>
     </div>
 </div>
+    
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    let checkboxes = document.querySelectorAll('.form-check-input');
+    
+    checkboxes.forEach(function(checkbox) {
+        let actividadContenedor = checkbox.closest('.list-group-item');
+        
+        if (checkbox.checked) {
+            actividadContenedor.style.backgroundColor = "#ffcccc";
+        } else {
+            actividadContenedor.style.backgroundColor = "";
+        }
+    });
+});
+</script>
+    
 {% endblock %}

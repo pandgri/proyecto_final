@@ -13,5 +13,5 @@ urlpatterns = [
     path('viaje/<int:pk>/editar/', views.EditarViajeView.as_view(), name='editar_viaje'),
     path('viaje/<int:pk>/eliminar/', views.EliminarViajeView.as_view(), name='eliminar_viaje'),
     path('viaje/<int:pk>/subir-imagen/', views.SubirImagenView.as_view(), name='subir_imagen'),
-
+    path('viaje/<int:pk>/agregar-actividad/', views.AgregarActividadView.as_view(), name='agregar_actividad'),
 ]

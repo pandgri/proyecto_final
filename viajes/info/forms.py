@@ -1,7 +1,8 @@
 from django import forms
 from django.core.validators import FileExtensionValidator
 
-from .models import Viaje, Actividad, Imagen
+from .models import Viaje, Actividad, Imagen, Comentario
+
 
 class ViajeForm(forms.ModelForm):
     class Meta:
@@ -10,8 +11,8 @@ class ViajeForm(forms.ModelForm):
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control'}),
             'ciudad': forms.TextInput(attrs={'class': 'form-control'}),
-            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'fecha_final': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
+            'fecha_final': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}, format='%Y-%m-%d'),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'presupuesto': forms.NumberInput(attrs={'class': 'form-control'}),
         }
@@ -82,3 +83,15 @@ class ImagenForm(forms.Form):
             'placeholder': 'Comentario para todas las imágenes'
         })
     )
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Escribe tu comentario...',
+                'class': 'form-control'
+            }),
+        }

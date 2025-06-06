@@ -54,8 +54,8 @@
 
                         <div class="row mb-3">
                             <div class="col">
-                                {{ form.birth_date.label_tag }}
-                                {{ form.birth_date }}
+                                <label for="id_birth_date" class="form-label">Fecha de nacimiento</label>
+                                <input type="date" name="birth_date" id="id_birth_date" class="form-control" value="{{ form.initial.birth_date|date:'Y-m-d' }}">
                             </div>
                             <div class="col">
                                 {{ form.country.label_tag }}
@@ -108,11 +108,11 @@
 
 <script>
 document.getElementById('id_profile_picture').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById('profile-preview');
+    let file = e.target.files[0];
+    let preview = document.getElementById('profile-preview');
 
     if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
+        let reader = new FileReader();
         reader.onload = function(e) {
             preview.src = e.target.result;
         }

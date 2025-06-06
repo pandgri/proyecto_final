@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white"><i class="bi bi-people me-2"></i>Usuarios Registrados</h2>
+        <a href="{% url 'adminpanel:panel' %}" class="btn btn-outline-light btn-sm mb-4">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-dark table-bordered table-hover">
+            <thead class="text-center">
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Nombre</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>País</th>
+                    <th>Staff</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for user in usuarios %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.birth_date }}</td>
+                    <td>{{ user.country }}</td>
+                    <td class="text-center">
+                        {% if user.is_staff %}
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"
+                               title="Usuario Staff"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 1.2rem;"
+                               title="Usuario Normal"></i>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if user.is_active %}
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.2rem;"
+                               title="Cuenta Activa"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 1.2rem;"
+                               title="Cuenta Inactiva"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'adminpanel:usuario_editar' user.pk %}" class="btn btn-sm btn-outline-warning me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-url="{% url 'adminpanel:usuario_eliminar' user.pk %}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

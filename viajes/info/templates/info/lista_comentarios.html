@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-chat-dots me-2"></i>Mis Comentarios</h1>
+    
+    <div class="list-group">
+        {% for comentario in comentarios %}
+           <div class="card mb-3">
+               <div class="card-header bg-warning-subtle p-2 ps-3 rounded">
+                   {% if user.profile_picture %}
+                       <img src="{{ user.profile_picture.url }}" alt="Perfil" class="rounded-circle"
+                            style="width: 40px; height: 40px; object-fit: cover;">
+                   {% else %}
+                       <img src="{% static 'images/default-profile.png' %}" alt="Perfil" class="rounded-circle"
+                            style="width: 40px; height: 40px; object-fit: cover;">
+                   {% endif %}
+                   <strong>{{ comentario.usuario.username }}</strong>
+                   <em>{{ comentario.fecha|date:"d/m/Y H:i" }}</em>
+               </div>
+               <div class="card-body p-2 ps-3">
+                   <p>{{ comentario.texto }}</p>
+               </div>
+           </div>
+        {% empty %}
+         <div class="alert alert-info">No tienes comentarios.</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
 {% load crispy_forms_filters %}
-{% load crispy_forms_tags %}
 
 {% block content %}
+<style>
+    body {
+        background-image: url('https://wallpapercat.com/w/full/0/6/9/274793-2560x1600-desktop-hd-dubai-background-image.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        backdrop-filter: blur(5px);
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card bg-dark border-secondary">
             <div class="card-body text-white">
                 <h3 class="card-title mb-4"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</h3>
-                <form method="post">
+                <form method="post" novalidate>
                     {% csrf_token %}
                     {{ form|crispy }}
                     <button type="submit" class="btn btn-primary w-100 mt-3">Iniciar sesión</button>

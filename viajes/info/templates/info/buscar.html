@@ -2,9 +2,106 @@
 {% load static %}
 
 {% block content %}
-    <h1>Buscar Ciudad</h1>
-    <form method="GET" action="{% url 'info:buscar_ciudad' %}">
-        <input type="text" name="city" placeholder="Ej: Madrid">
-        <button type="submit">Buscar</button>
-    </form>
+<style>
+    body {
+        background-image: url('https://alanxelmundo.com/wp-content/uploads/2023/10/chalten.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        backdrop-filter: blur(5px);
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+        margin: 0;
+    }
+
+    .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        height: 100vh;
+    }
+
+    .search-box {
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 2rem 3rem;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .search-box h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<div class="center-container">
+    <form method="GET" action="{% url 'info:buscar_ciudad' %}" class="search-box mt-5">
+    <h1>Explora tu próximo destino</h1>
+
+    <select id="country-select" class="form-control mb-3" required>
+        <option value="">Selecciona un país</option>
+    </select>
+
+    <select name="city" id="city-select" class="form-control mb-3" required>
+        <option value="">Selecciona una ciudad</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-search me-2"></i>Buscar
+    </button>
+</form>
+
+</div>
+    
+    
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    let countrySelect = document.getElementById("country-select");
+    let citySelect = document.getElementById("city-select");
+
+    fetch("https://countriesnow.space/api/v0.1/countries/positions")
+        .then(res => res.json())
+        .then(data => {
+            let countries = data.data;
+            countries.forEach(c => {
+                let option = document.createElement("option");
+                option.value = c.name;
+                option.textContent = c.name;
+                countrySelect.appendChild(option);
+            });
+        });
+
+    countrySelect.addEventListener("change", () => {
+        let country = countrySelect.value;
+        citySelect.innerHTML = '<option value="">Cargando ciudades...</option>';
+
+        fetch("https://countriesnow.space/api/v0.1/countries/cities", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ country: country })
+        })
+        .then(res => res.json())
+        .then(data => {
+            citySelect.innerHTML = '<option value="">Selecciona una ciudad</option>';
+            if (data.data && Array.isArray(data.data)) {
+                data.data.forEach(city => {
+                    let option = document.createElement("option");
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        })
+        .catch(() => {
+            citySelect.innerHTML = '<option value="">No se pudieron cargar las ciudades</option>';
+        });
+    });
+});
+</script>
 {% endblock %}

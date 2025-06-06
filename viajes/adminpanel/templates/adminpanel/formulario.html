@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<style>
+form p .helptext {
+    display: block;
+}
+</style>
+
+<div class="container mt-5 text-white">
+    <h2>{{ titulo }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mb-3">Guardar</button>
+        <a href="javascript:history.back()" class="btn btn-secondary mb-3">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

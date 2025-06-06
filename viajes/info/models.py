@@ -36,3 +36,15 @@ class Actividad(models.Model):
 
     def __str__(self):
         return self.titulo
+
+class Comentario(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    texto = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    aprobado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.usuario.username} - {self.fecha}'
+
+    class Meta:
+        ordering = ['-fecha']

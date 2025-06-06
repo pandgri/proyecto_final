@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
@@ -64,7 +64,9 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
             user.set_password(new_password)
             user.save()
-            login(self.request, user)
+            logout(self.request)  # cerrar sesión para forzar re-login
+            messages.success(self.request, 'actualizacion_password')
+            return redirect('users:login')  # Redirige al login
 
         response = super().form_valid(form)
 

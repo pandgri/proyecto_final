@@ -14,4 +14,8 @@ urlpatterns = [
     path('viaje/<int:pk>/eliminar/', views.EliminarViajeView.as_view(), name='eliminar_viaje'),
     path('viaje/<int:pk>/subir-imagen/', views.SubirImagenView.as_view(), name='subir_imagen'),
     path('viaje/<int:pk>/agregar-actividad/', views.AgregarActividadView.as_view(), name='agregar_actividad'),
+    path('actividad/<int:pk>/eliminar/', views.EliminarActividadView.as_view(), name='eliminar_actividad'),
+    path('viaje/<int:pk>/galeria/', views.GaleriaImagenesView.as_view(), name='galeria_imagenes'),
+    path('imagen/<int:pk>/eliminar/', views.EliminarImagenView.as_view(), name='eliminar_imagen'),
+    path('comentarios/', views.ListaComentariosView.as_view(), name='lista_comentarios'),
 ]

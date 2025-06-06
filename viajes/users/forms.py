@@ -1,6 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
-
+from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
@@ -54,23 +53,18 @@ class CustomUserProfileForm(forms.ModelForm):
             'birth_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'country': forms.Select(attrs={'class': 'form-control'}),
         }
-        labels = {
-            'profile_picture': 'Foto de perfil',
-            'bio': 'Biografía',
-            'birth_date': 'Fecha de nacimiento',
-            'country': 'Pais'
-        }
 
     def clean(self):
         cleaned_data = super().clean()
+        current_password = cleaned_data.get('current_password')
         new_password = cleaned_data.get('new_password')
         confirm_password = cleaned_data.get('confirm_password')
 
         if new_password or confirm_password:
             if new_password != confirm_password:
-                raise forms.ValidationError("Las contraseñas no coinciden")
+                raise forms.ValidationError("Las contraseñas no coinciden.")
 
-            if not self.cleaned_data.get('current_password'):
-                raise forms.ValidationError("Debe ingresar la contraseña actual para cambiar la contraseña")
+            if not current_password:
+                raise forms.ValidationError("Debe ingresar la contraseña actual para cambiar la contraseña.")
 
         return cleaned_data

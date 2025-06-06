@@ -129,17 +129,17 @@
         <span class="badge bg-danger p-2 mb-3 lead fs-6">Se considera un pueblo</span>
     {% endif %}
     <!-- Imagen de la ciudad -->
-    {% if photos %}
-        <div class="row city-header shadow-sm mb-4">
-            {% for photo in photos %}
-                <div class="col-md-6 mb-2">
-                    <img src="{{ photo }}" class="img-fluid w-100 rounded" alt="Foto de {{ city }}">
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-secondary mb-4">No se encontraron imágenes para esta ciudad</div>
-    {% endif %}
+    {% if photo_error %}
+       <div class="alert alert-warning">{{ photo_error }}</div>
+   {% elif photos %}
+       <div class="row city-header shadow-sm mb-4">
+           {% for photo in photos %}
+               <div class="col-md-6 mb-2">
+                   <img src="{{ photo }}" class="img-fluid w-100 rounded" alt="Foto de {{ city }}">
+               </div>
+           {% endfor %}
+       </div>
+   {% endif %}
 
     <!-- Tarjeta de datos del clima -->
     <div class="weather-card">

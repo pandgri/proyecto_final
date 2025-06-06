@@ -22,8 +22,8 @@
                 {% endfor %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-success">Añadir Actividad</button>
-        <a href="{% url 'info:detalle_viaje' viaje.pk %}" class="btn btn-secondary ms-2">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Añadir Actividad</button>
+        <a href="{% url 'info:detalle_viaje' viaje.pk %}" class="btn btn-outline-secondary ms-2">Cancelar</a>
     </form>
 </div>
 {% endblock %}

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'django_cleanup.apps.CleanupConfig',
     'django_countries',
+    'adminpanel',
 ]
 
 MIDDLEWARE = [

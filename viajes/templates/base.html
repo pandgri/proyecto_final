@@ -24,7 +24,27 @@
         }
 
         [id*="helptext"] {
-            color: #DC3545;
+            position: relative;
+            padding: 15px 20px 15px 60px;
+            margin-top: 15px;
+            background-color: rgba(91, 192, 222, 0.1);
+            border: 2px solid #5bc0de;
+            border-radius: 10px;
+            color: #CDCDCD;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        [id*="helptext"]::before {
+            content: "\F431";
+            font-family: "bootstrap-icons";
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            font-size: 1.6rem;
+            color: #5bc0de;
         }
 
         .errores {
@@ -78,6 +98,18 @@
                             <i class="bi bi-airplane"></i> Mis Viajes
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'info:lista_comentarios' %}">
+                            <i class="bi bi-chat-dots"></i> Mis Comentarios
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'adminpanel:panel' %}">
+                            <i class="bi bi-tools"></i> Panel de Administración
+                        </a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             {% if user.profile_picture %}
@@ -145,13 +177,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'users:login' %}">
-                    {% csrf_token %}
-                    <div class="text-light">
-                        {{ login_form|crispy }}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Iniciar sesión</button>
-                </form>
+                <a href="{% url 'users:login' %}" class="btn btn-primary w-100 mt-3">Iniciar sesión</a>
             </div>
             <div class="modal-footer border-secondary justify-content-center">
                 <span class="text-white">
@@ -177,13 +203,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'users:registro' %}">
-                    {% csrf_token %}
-                    <div class="text-light">
-                        {{ registro_form|crispy }}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Registrarse</button>
-                </form>
+                <a href="{% url 'users:registro' %}" class="btn btn-primary w-100 mt-3">Registrarse</a>
             </div>
             <div class="modal-footer border-secondary justify-content-center">
                 <span class="text-white">
@@ -207,7 +227,7 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar este viaje?</p>
+                <p>¿Estás seguro de que lo deseas eliminar?</p>
                 <form id="deleteForm" method="post" action="">
                     {% csrf_token %}
                     <div class="d-flex justify-content-end gap-2">
@@ -239,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     {% for message in messages %}
         {% if message.message == 'login_success' %}
-            document.getElementById('toast-message').textContent = '¡Sesión iniciada correctamente!';
+            document.getElementById('toast-message').textContent = '¡Sesión iniciada con éxito!';
             document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
             document.getElementById('toast').classList.add('bg-success');
             toast.show();
@@ -249,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('toast').classList.add('bg-success');
             toast.show();
         {% elif message.message == 'logout_success' %}
-            document.getElementById('toast-message').textContent = '¡Sesión cerrada correctamente!';
+            document.getElementById('toast-message').textContent = '¡Sesión cerrada con éxito!';
             document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
             document.getElementById('toast').classList.add('bg-success');
             toast.show();
@@ -269,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('toast').classList.add('bg-danger');
             toast.show();
         {% elif message.message == 'edicion_perfil_success' %}
-            document.getElementById('toast-message').textContent = '¡Perfil actualizado correctamente!';
+            document.getElementById('toast-message').textContent = '¡Perfil actualizado con éxito!';
             document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
             document.getElementById('toast').classList.add('bg-success');
             toast.show();
@@ -278,12 +298,45 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
             document.getElementById('toast').classList.add('bg-success');
             toast.show();
+        {% elif message.message == 'actualizacion_password' %}
+            document.getElementById('toast-message').textContent = '¡Contraseña actualizada!. Vuelve a iniciar sesión.';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'eliminacion_actividad_success' %}
+            document.getElementById('toast-message').textContent = '¡Actividad eliminada con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-danger');
+            toast.show();
+        {% elif message.message == 'eliminacion_imagen_success' %}
+            document.getElementById('toast-message').textContent = '¡Imagen eliminada con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-danger');
+            toast.show();
+        {% elif message.message == 'comentario_enviado_success' %}
+            document.getElementById('toast-message').textContent = '¡Tu comentario fue enviado!. Está pendiente de aprobación.';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'edicion_usuario_success' %}
+            document.getElementById('toast-message').textContent = '¡Usuario actualizado con éxito!';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-warning');
+            toast.show();
+        {% elif message.message == 'comentario_aprobado_success' %}
+            document.getElementById('toast-message').textContent = 'Comentario aprobado con éxito.';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-success');
+            toast.show();
+        {% elif message.message == 'comentario_eliminado_success' %}
+            document.getElementById('toast-message').textContent = 'Comentario eliminado con éxito.';
+            document.getElementById('toast').classList.remove('bg-warning', 'bg-danger', 'bg-success');
+            document.getElementById('toast').classList.add('bg-danger');
+            toast.show();
         {% endif %}
     {% endfor %}
-});
 
-document.addEventListener('DOMContentLoaded', function() {
-        let deleteModal = document.getElementById('deleteModal');
+    let deleteModal = document.getElementById('deleteModal');
 
         deleteModal.addEventListener('show.bs.modal', function(event) {
             let button = event.relatedTarget;

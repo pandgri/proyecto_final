@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Estadísticas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white mb-4"><i class="bi bi-bar-chart-line-fill me-3 fs-1"></i>Estadísticas Generales</h2>
+        <a href="{% url 'adminpanel:panel' %}" class="btn btn-outline-light btn-sm mb-4">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+        <div class="col">
+            <div class="card border-0 shadow-lg rounded-4 bg-primary bg-opacity-75">
+                <div class="card-body text-white text-center py-5">
+                    <i class="bi bi-people-fill fs-1 mb-3"></i>
+                    <h5 class="card-title">Usuarios</h5>
+                    <h2 class="display-5 fw-bold">{{ usuarios }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-0 shadow-lg rounded-4 bg-primary bg-opacity-75">
+                <div class="card-body text-white text-center py-5">
+                    <i class="bi bi-airplane fs-1 mb-3"></i>
+                    <h5 class="card-title">Viajes</h5>
+                    <h2 class="display-5 fw-bold">{{ viajes }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-0 shadow-lg rounded-4 bg-primary bg-opacity-75">
+                <div class="card-body text-white text-center py-5">
+                    <i class="bi bi-chat-dots-fill fs-1 mb-3"></i>
+                    <h5 class="card-title">Comentarios</h5>
+                    <h2 class="display-5 fw-bold">{{ comentarios }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col mb-5">
+            <div class="card border-0 shadow-lg rounded-4 bg-warning bg-opacity-75">
+                <div class="card-body text-white text-center py-5">
+                    <i class="bi bi-chat-dots-fill fs-1 mb-3"></i>
+                    <h5 class="card-title">Comentarios Pendientes</h5>
+                    <h2 class="display-5 fw-bold">{{ comentarios_pendientes }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

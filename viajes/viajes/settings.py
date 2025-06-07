@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-ru_m0tb7g5y#3quqnfmbwej1l1mg@z9hlo!8y8umay(9y=)ypa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pandgri-daw2.tech', 'turisteo.pandgri-daw2.tech']
+ALLOWED_HOSTS = ['pandgri-daw2.tech', 'turisteo.pandgri-daw2.tech', 'localhost', '127.0.0.1']
 
 USE_X_FORWARDED_HOST = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

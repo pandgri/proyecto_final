@@ -297,9 +297,13 @@ DATABASES = {
     PIXABAY_KEY=49609165-9a2f178ee6073c155f4c5fb65
     OPENTRIPMAP_KEY=5ae2e3f221c38a28845f05b66082b0296d0d813b4e3a0a8130033f68
    ```
+   
+5. Cuando tenemos estos archivos en la instancia EC2 ponemos el siguiente comando:
+   ```python
+   docker compose up -d
+   ```
 
-
-
+6. La web ya estaría en funcionamiento.
 
 
 

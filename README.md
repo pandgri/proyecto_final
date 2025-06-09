@@ -209,7 +209,10 @@ DATABASES = {
 ## Despliegue de proyecto
 1. Creamos una instancia EC2 en Amazon Web Service (AWS).
 2. Creamos una ip elástica, la cual possteriormente vamos a enlazar con la instancia EC2 creada.
-3. Entramos en una pagina de dominios y a nuestro dominio le asignamos un CNAME con nuestra ip elástica, y ponemos de A Records las urls que vamos a utilizar en nuestro compose.yml:
+3. Entramos en una pagina de dominios y a nuestro dominio le asignamos un CNAME con nuestra ip elástica, y ponemos de A Records las urls que vamos a utilizar en nuestro compose.yml.
+4. Accedemos con el 'vockey.pem' a la instancia EC2 y desde fuera de la instancia vamos a copiar los siguientes archivos:
+
+   - compose.yml:
    ```python
       version: '3.9'
 

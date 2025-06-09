@@ -280,8 +280,23 @@ DATABASES = {
         postgres_data:
    ```
 
-
-
+   - .env:
+   ```python
+    # Django
+    SECRET_KEY=tu_clave_secreta_segura
+    
+    # Database
+    POSTGRES_DB=django_db
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=password
+    POSTGRES_HOST=db
+    POSTGRES_PORT=5432
+    
+    # API
+    OWM_API_KEY=2995b6309c1d8c013c14c2512a7f751a
+    PIXABAY_KEY=49609165-9a2f178ee6073c155f4c5fb65
+    OPENTRIPMAP_KEY=5ae2e3f221c38a28845f05b66082b0296d0d813b4e3a0a8130033f68
+   ```
 
 
 

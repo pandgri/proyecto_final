@@ -205,3 +205,85 @@ DATABASES = {
     }
 }
 ```
+
+## Despliegue de proyecto
+1. Creamos una instancia EC2 en Amazon Web Service (AWS).
+2. Creamos una ip elástica, la cual possteriormente vamos a enlazar con la instancia EC2 creada.
+3. Entramos en una pagina de dominios y a nuestro dominio le asignamos un CNAME con nuestra ip elástica, y ponemos de A Records las urls que vamos a utilizar en nuestro compose.yml:
+   ```python
+      version: '3.9'
+
+      services:
+        traefik:
+          image: "traefik:v3.2"
+          container_name: "traefik"
+          command:
+            - "--log.level=INFO"
+            - "--api.dashboard=true"
+            - "--api.insecure=true"
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=false"
+            - "--entrypoints.web.address=:80"
+            - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+            - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+            - "--entrypoints.websecure.address=:443"
+            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+            - "--certificatesresolvers.myresolver.acme.email=pandgri859@fp.iesromerovargas.com"
+            - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+          labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.traefik.rule=Host(`pandgri-daw2.tech`)"
+            - "traefik.http.routers.traefik.service=api@internal"
+            - "traefik.http.routers.traefik.entrypoints=websecure"
+            - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+            - "traefik.http.routers.traefik.middlewares=myauth"
+            - "traefik.http.middlewares.myauth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
+          ports:
+            - "443:443"
+            - "80:80"
+            - "8080:8080"
+          volumes:
+            - "./letsencrypt:/letsencrypt"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      
+        db:
+          image: postgres:15
+          container_name: viajes-db
+          restart: always
+          volumes:
+            - postgres_data:/var/lib/postgresql/data
+          env_file:
+            - .env
+      
+        web:
+          build: .
+          image: pandgri859/viajes-app
+          container_name: viajes-web
+          restart: always
+          command: >
+            sh -c "python manage.py migrate &&
+                   python manage.py runserver 0.0.0.0:8000"
+          depends_on:
+            - db
+          env_file:
+            - .env
+          labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.viajes.rule=Host(`turisteo.pandgri-daw2.tech`)"
+            - "traefik.http.routers.viajes.entrypoints=websecure"
+            - "traefik.http.routers.viajes.tls.certresolver=myresolver"
+      
+      volumes:
+        postgres_data:
+   ```
+
+
+
+
+
+
+
+
+
+
+

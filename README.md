@@ -168,3 +168,26 @@ http://localhost:8000/
     EXPOSE 8000
     CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     ```
+
+  - requirements.txt:
+    ```python
+    ﻿asgiref==3.8.1
+    certifi==2025.4.26
+    charset-normalizer==3.4.2
+    crispy-bootstrap5==2025.4
+    Django==5.2.1
+    django-cleanup==9.0.0
+    django-countries==7.6.1
+    django-crispy-forms==2.4
+    idna==3.10
+    pillow==11.2.1
+    python-dotenv==1.1.0
+    requests==2.32.3
+    sqlparse==0.5.3
+    typing_extensions==4.13.2
+    tzdata==2025.2
+    urllib3==2.4.0
+    pytest==8.2.1
+    gunicorn==20.1.0
+    psycopg2-binary==2.9.10
+    ```

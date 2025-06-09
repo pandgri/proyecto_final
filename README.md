@@ -206,6 +206,19 @@ DATABASES = {
 }
 ```
 
+## Crear imagen docker
+- Despues de hacer el **docker compose up -d** para local.
+  1. Ponemos los siguientes comandos:
+     ```python
+     docker login
+     ```
+     ```python
+     docker build -t pandgri859/viajes-app .
+     ```
+     ```python
+     docker push pandgri859/viajes-app
+     ```
+
 ## Despliegue de proyecto
 1. Creamos una instancia EC2 en Amazon Web Service (AWS).
 2. Creamos una ip elástica, la cual possteriormente vamos a enlazar con la instancia EC2 creada.

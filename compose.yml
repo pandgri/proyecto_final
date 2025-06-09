@@ -47,9 +47,9 @@ services:
     image: pandgri859/viajes-app
     container_name: viajes-web
     restart: always
-    command: gunicorn viajes.wsgi:application --bind 0.0.0.0:8000
-    volumes:
-      - .:/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
     env_file:

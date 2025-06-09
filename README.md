@@ -66,7 +66,9 @@ http://localhost:8000/
 
 ````
 
-<font color="red">¡Atención!</font>
+:::danger
+¡Atención!
+:::
 
 - Si no funciona el puerto quizas tengas algun proyecto que utilice el mismo puerto que el de la aplicacion, en ese caso utiliza el siguiente comando para quitar todo lo que tengas activo
 ```python

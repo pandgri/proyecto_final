@@ -41,3 +41,27 @@ Esta web puede servir para personas que estén planificando viajes o que quieren
 6. **Semana 6:** Diseño del frontend y tests.
 7. **Semana 7:** Dockerización, corrección de errores y documentación.
 8. **Semana 8:** Despliegue final de la aplicación en AWS.
+
+
+# TURISTEO
+## PASOS PARA INICIAR EL PROGRAMA
+1. Con el programa recien instalado nos vamos a la terminal y escribimos
+```python
+
+docker compose build
+
+````
+
+2. Despues de que se construya nuestra imagen de docker vamos a levantarlo
+```python
+
+docker compose up -d
+
+````
+
+3. Con todo listo podemos acceder al proyecto añadiendo la siguiente ruta dentro del navegador
+```python
+
+http://localhost:8000/
+
+````

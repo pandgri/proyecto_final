@@ -191,3 +191,17 @@ http://localhost:8000/
     gunicorn==20.1.0
     psycopg2-binary==2.9.10
     ```
+
+Ahora solo nos faltaria ajustar la base de datos dentro del proyecto, asegurandonos de que sean iguales tanto en los settings como en el docker-compose, ya que sino no funcionaría
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'django_db'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+    }
+}
+```
